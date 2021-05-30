@@ -37,7 +37,7 @@ ylabel('pourcentage de variance');
 
 [BetaPCR, Y_fitted_PCR] = PCR(Y, X, k);
 R_2 = R_squared(Y, Y_fitted_PCR);
-fprintf('multiple linear regression : R^2 = %.6f\n',R_2);
+fprintf('PCR : R^2 = %.6f\n',R_2);
 % On obtient une faible valeur prédictive de 0.19
 
 % On remarque que nos premiers PC capturent 85% de la variance, les 15% restants apparaissent être important. pour prédire Y
@@ -48,7 +48,7 @@ fprintf('multiple linear regression : R^2 = %.6f\n',R_2);
 %% PLS
 [BetaPLS, Y_fitted_PLS] = PLS(Y, X, k);
 R_2 = R_squared(Y, Y_fitted_PLS);
-fprintf('multiple linear regression : R^2 = %.6f\n',R_2);
+fprintf('PLS : R^2 = %.6f\n',R_2);
 
 %% PLS vs PCR
 figure(3);
