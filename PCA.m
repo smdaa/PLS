@@ -1,5 +1,5 @@
-function [coeff,score,latent] = PCA(X)
-
+% Analyse en composantes principales
+function [coeff, score, latent] = PCA(X)
     % calcul de la matrice de variance/covariance
     n = size(X, 1);
     Xc = X - mean(X, 1);
@@ -19,6 +19,4 @@ function [coeff,score,latent] = PCA(X)
     
     % latent : les valeurs propres de la matrice de covariance de x arrangées par ordre décroissant.
     latent = D;
-    
 end
-
