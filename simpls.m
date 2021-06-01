@@ -1,6 +1,9 @@
 % SIMPLS (Statistical Inspired Modification of Partial Least Squares),
 % proposé par S. de Jong. 1993
 
+% Motivation : dériver les facteurs PLS T directement comme
+% combinaisons linéaires de l'original (centré) X
+
 % l'algorithme SIMPLS est équivalent à NIPALS lorsque Y se limmte a une
 % seule variable
 
@@ -25,7 +28,8 @@ function BetaPLS = SIMPLS(Y, X, k)
     W = zeros(p, k);
     
     % pour la déflation (pour éliminer la solution déjà déterminée, tout en
-    % laissant les solutions restantes inchangées)
+    % laissant les solutions restantes inchangées) On utilise V une base
+    % othonormale de P (X-loading)
     V = zeros(p, k);
     
     % On calcule la matrice de covariance 
@@ -37,6 +41,11 @@ function BetaPLS = SIMPLS(Y, X, k)
         % ti'*tj=0 pour j=1:(i-1) et ||ti|| = 1
         
         % Décomposition en valeurs singulières
+        % C'est un peu de gaspillage car nous n'avons besoin que du premier
+        % vp mais la SVD est rapide donc c'est pas grave surtout avec le
+        % parametre econ qui supprime les zéros dans la matrice diagonale
+        % des valeurs singulières ce qui améliore le temps d'exécution et
+        % réduit le stockage sans compromettre la précision.
         [A, D, B] = svd(Cov, 'econ');
         % A = les vecteurs propres de (Cov) * (Cov)'
         % B = les vecteurs propres de (Cov)' * (Cov)
@@ -44,7 +53,7 @@ function BetaPLS = SIMPLS(Y, X, k)
         
         % On calcule les loadings de X et Y (basé sur la SVD)
         ai = A(:, 1);
-        d = D(1);
+        d  = D(1);
         bi = B(:, 1);
         
         % On calcule le X-score
@@ -66,13 +75,13 @@ function BetaPLS = SIMPLS(Y, X, k)
         % On calcule le X-weight
         W(:, i) = ai ./ tnorm;
         
-        % deflation
-        [dV, dCov] = deflate(i, V, Cov, P);
-        V          = dV;
-        Cov        = dCov;
+        % Déflation de la matrice Cov ie projection sur le Complément 
+        % orthogonal de P (matrice des loadings de X)
+        [newV, newCov] = deflate(i, V, Cov, P);
+        V              = newV;
+        Cov            = newCov;
         
     end
-    
     BetaPLS = W * Q';
         
 end
@@ -83,17 +92,15 @@ function [V, Cov] = deflate(i, oldV, oldCov, P)
     Cov = oldCov;
     vi  = P(:, i);
     
-    for repeat = 1:2
-       for j = 1:i-1
-          vj = V(:, j);
-          vi = vi - (vi' * vj) * vj; 
-       end
+    % la base V doit etre orthogonal donc on applique Gram Schmidt modifié
+    % (plus stable numériquement)
+    for j = 1:i-1
+        vj = V(:, j);
+        vi = vi - (vi' * vj) * vj; 
     end
-    
-    vi               = vi ./ norm(vi);
+    vi      = vi ./ norm(vi);
     V(:, i) = vi;
     
+    % supprimer les projections au long du vecteur de base actuel
     Cov = Cov - vi * (vi' * Cov); 
-    Vi  = V(:, 1:i);
-    Cov = Cov - Vi * (Vi' * Cov);
 end

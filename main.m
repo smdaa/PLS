@@ -81,4 +81,3 @@ plot(Y, Y_fitted_PLS,'bo', Y, Y_fitted_PCR,'r^');
 xlabel('Observed Response');
 ylabel('Fitted Response');
 legend({'PLS1 avec 2 PC' 'PCR with 2 PC'})
-
