@@ -40,6 +40,7 @@ plot3(repmat(1:401, 60, 1)', repmat((1:size(octane, 1))', 1, 401)', NIR');
 xlabel("indice de longueur d'onde");
 ylabel("gasoline");
 title('Visualisation des données');
+%saveas(gcf,'1.pdf')
 % On a un grand nombre de variables prédictives fortement corrélés
 
 %% Régression linéaire multiple
@@ -69,6 +70,7 @@ plot(1:length(latent), sort(latent./sum(latent), 'descend'), '-o');
 title('Pourcentage de variance expliqué en X');
 xlabel('num de la comp. ppale');
 ylabel('pourcentage de variance');
+%saveas(gcf,'2.pdf')
 
 [Beta_PCR, Y_fitted_PCR] = PCR(Y_train, X_train, k);
 R_2 = R_squared(Y_train, Y_fitted_PCR);
@@ -93,6 +95,7 @@ xlabel('Observed Response train');
 ylabel('Fitted Response train');
 title("Comparaison sur les données d'apprentissage")
 legend({'PLS1 avec 2 PC', 'PCR with 2 PC', 'MLR'})
+%saveas(gcf,'3.pdf')
 
 % Comparaison sur les données de test
 Y_fitted_MLR_test = X_test * Beta_MLR;
@@ -113,3 +116,4 @@ xlabel('Observed Response test');
 ylabel('Fitted Response test');
 title("Comparaison sur les données de test");
 legend({'PLS1 avec 2 PC', 'PCR with 2 PC', 'MLR'});
+%saveas(gcf,'4.pdf')
